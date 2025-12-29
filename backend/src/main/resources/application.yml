@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: medee
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/medee}
+      database: medee
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+jwt:
+  secret: ${JWT_SECRET:medee-secret-key-change-this-in-production-please-make-it-long-enough}
+  expiration: 86400000 # 24 hours in milliseconds
+
+logging:
+  level:
+    com.medee: DEBUG
+    org.springframework.security: DEBUG
+

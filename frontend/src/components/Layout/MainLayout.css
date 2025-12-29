@@ -1,0 +1,27 @@
+.logo {
+  float: left;
+  padding: 0 24px;
+}
+
+.logo h2 {
+  transition: opacity 0.3s;
+}
+
+.logo:hover h2 {
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .ant-layout-header {
+    padding: 0 16px;
+  }
+
+  .logo h2 {
+    font-size: 18px;
+  }
+
+  .ant-layout-content {
+    padding: 16px 16px !important;
+  }
+}
+

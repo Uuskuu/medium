@@ -1,0 +1,102 @@
+.post-content-display {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-content-display .public-DraftStyleDefault-block {
+  margin: 1.5em 0;
+}
+
+.post-content-display h1 {
+  font-size: 2em;
+  font-weight: 700;
+  margin: 1em 0 0.5em;
+}
+
+.post-content-display h2 {
+  font-size: 1.75em;
+  font-weight: 700;
+  margin: 0.9em 0 0.5em;
+}
+
+.post-content-display h3 {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin: 0.8em 0 0.5em;
+}
+
+.post-content-display h4 {
+  font-size: 1.25em;
+  font-weight: 600;
+  margin: 0.7em 0 0.5em;
+}
+
+.post-content-display p {
+  margin: 1em 0;
+}
+
+.post-content-display ul,
+.post-content-display ol {
+  margin: 1em 0;
+  padding-left: 2em;
+}
+
+.post-content-display li {
+  margin: 0.5em 0;
+}
+
+.post-content-display blockquote {
+  border-left: 4px solid #1890ff;
+  padding-left: 20px;
+  margin: 1.5em 0;
+  color: #666;
+  font-style: italic;
+}
+
+.post-content-display pre {
+  background: #f6f8fa;
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.post-content-display code {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  background: #f6f8fa;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 14px;
+}
+
+.post-content-display a {
+  color: #1890ff;
+  text-decoration: none;
+}
+
+.post-content-display a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .post-content-display {
+    font-size: 15px;
+  }
+
+  .post-content-display h1 {
+    font-size: 1.75em;
+  }
+
+  .post-content-display h2 {
+    font-size: 1.5em;
+  }
+
+  .post-content-display h3 {
+    font-size: 1.25em;
+  }
+}
+
