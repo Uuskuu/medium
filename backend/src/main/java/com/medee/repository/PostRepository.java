@@ -17,5 +17,10 @@ public interface PostRepository extends MongoRepository<Post, String> {
     Page<Post> findByAuthorId(String authorId, Pageable pageable);
     long countByStatus(PostStatus status);
     long countByAuthorId(String authorId);
+    
+    // Category related methods
+    long countByCategoryId(String categoryId);
+    Page<Post> findByCategoryIdAndStatus(String categoryId, PostStatus status, Pageable pageable);
+    List<Post> findByCategoryId(String categoryId);
 }
 

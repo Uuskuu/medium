@@ -20,6 +20,8 @@ import BackofficeDashboard from './pages/Backoffice/Dashboard';
 import ReviewPosts from './pages/Backoffice/ReviewPosts';
 import UserManagement from './pages/Backoffice/UserManagement';
 import SalaryManagement from './pages/Backoffice/SalaryManagement';
+import ReportManagement from './pages/Backoffice/ReportManagement';
+import CategoryManagement from './pages/Backoffice/CategoryManagement';
 
 // Protected Route Component
 const ProtectedRoute = observer(({ children, requireRole }) => {
@@ -120,6 +122,22 @@ const App = observer(() => {
               element={
                 <ProtectedRoute requireRole="ADMIN">
                   <SalaryManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="reports"
+              element={
+                <ProtectedRoute requireRole="ADMIN">
+                  <ReportManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="categories"
+              element={
+                <ProtectedRoute requireRole="ADMIN">
+                  <CategoryManagement />
                 </ProtectedRoute>
               }
             />

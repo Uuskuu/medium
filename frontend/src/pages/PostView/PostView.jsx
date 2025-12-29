@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography, Space, Button, Divider, Input, List, message, Tag, Spin, Card } from 'antd';
-import { LikeOutlined, LikeFilled, EyeOutlined, CalendarOutlined, UserOutlined } from '@ant-design/icons';
+import { LikeOutlined, LikeFilled, EyeOutlined, CalendarOutlined, UserOutlined, FlagOutlined } from '@ant-design/icons';
 import { observer } from 'mobx-react-lite';
 import { useStores } from '../../stores';
 import PostContent from '../../components/Post/PostContent';
+import ShareButtons from '../../components/ShareButtons/ShareButtons';
+import ReportModal from '../../components/ReportModal/ReportModal';
 import postService from '../../services/postService';
+import { getReadingTime } from '../../utils/readingTime';
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -15,9 +18,12 @@ const PostView = observer(() => {
   const { postStore, authStore } = useStores();
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
+  const [replyText, setReplyText] = useState({});
+  const [replyingTo, setReplyingTo] = useState(null);
   const [liked, setLiked] = useState(false);
   const [submittingComment, setSubmittingComment] = useState(false);
   const [loadingComments, setLoadingComments] = useState(false);
+  const [reportModalVisible, setReportModalVisible] = useState(false);
 
   useEffect(() => {
     loadPost();
@@ -62,7 +68,7 @@ const PostView = observer(() => {
 
     setSubmittingComment(true);
     try {
-      await postService.addComment(id, commentText);
+      await postService.addComment(id, commentText, null);
       setCommentText('');
       message.success('Сэтгэгдэл нэмэгдлээ');
       loadComments();
@@ -70,6 +76,24 @@ const PostView = observer(() => {
       message.error('Сэтгэгдэл нэмэх үед алдаа гарлаа');
     } finally {
       setSubmittingComment(false);
+    }
+  };
+
+  const handleReply = async (parentCommentId) => {
+    const text = replyText[parentCommentId];
+    if (!text || !text.trim()) {
+      message.warning('Хариу оруулна уу');
+      return;
+    }
+
+    try {
+      await postService.addComment(id, text, parentCommentId);
+      setReplyText({ ...replyText, [parentCommentId]: '' });
+      setReplyingTo(null);
+      message.success('Хариу нэмэгдлээ');
+      loadComments();
+    } catch (error) {
+      message.error('Хариу нэмэх үед алдаа гарлаа');
     }
   };
 
@@ -84,86 +108,270 @@ const PostView = observer(() => {
   const post = postStore.currentPost;
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto' }}>
-      <Title level={1}>{post.title}</Title>
+    <div style={{ maxWidth: '680px', margin: '0 auto' }}>
+      <Title 
+        level={1} 
+        style={{ 
+          fontFamily: 'Playfair Display, Georgia, Cambria, serif',
+          fontSize: '42px',
+          fontWeight: 700,
+          lineHeight: '52px',
+          letterSpacing: '-0.02em',
+          color: '#242424',
+          marginBottom: '16px'
+        }}
+      >
+        {post.title}
+      </Title>
 
-      <Space wrap style={{ marginBottom: 24 }}>
-        <Text>
-          <UserOutlined /> {post.authorName}
+      <Space wrap style={{ marginBottom: 32, fontSize: '14px', color: 'rgba(0, 0, 0, 0.54)' }}>
+        <Text style={{ color: '#242424', fontWeight: 500 }}>
+          {post.authorName}
         </Text>
+        <Text type="secondary">·</Text>
         <Text type="secondary">
-          <CalendarOutlined /> {new Date(post.publishedAt || post.createdAt).toLocaleDateString('mn-MN')}
+          {new Date(post.publishedAt || post.createdAt).toLocaleDateString('mn-MN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })}
         </Text>
+        <Text type="secondary">·</Text>
         <Text type="secondary">
-          <EyeOutlined /> {post.views} үзсэн
+          {getReadingTime(post.content)}
         </Text>
-        <Tag color="blue">
-          <LikeOutlined /> {post.likes} таалагдсан
-        </Tag>
       </Space>
 
-      <Divider />
+      <Divider style={{ marginBottom: 40, borderColor: 'rgba(0, 0, 0, 0.05)' }} />
 
       <PostContent content={post.content} />
 
-      <Divider />
+      <Divider style={{ marginTop: 48, marginBottom: 32, borderColor: 'rgba(0, 0, 0, 0.05)' }} />
 
-      <Space>
-        <Button
-          type={liked ? 'primary' : 'default'}
-          icon={liked ? <LikeFilled /> : <LikeOutlined />}
-          size="large"
-          onClick={handleLike}
-        >
-          {liked ? 'Таалагдсан' : 'Таалагдах'} ({post.likes})
-        </Button>
-      </Space>
+      <div style={{ marginBottom: 32 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <Space>
+            <Button
+              type={liked ? 'default' : 'default'}
+              icon={liked ? <LikeFilled /> : <LikeOutlined />}
+              size="large"
+              onClick={handleLike}
+              style={{
+                border: '1px solid rgba(0, 0, 0, 0.15)',
+                borderRadius: '99em',
+                fontSize: '14px',
+                fontWeight: 400,
+                color: liked ? '#1a8917' : 'rgba(0, 0, 0, 0.68)',
+                backgroundColor: liked ? 'rgba(26, 137, 23, 0.1)' : 'transparent',
+                height: '40px',
+                padding: '0 16px'
+              }}
+            >
+              Таалагдах ({post.likes})
+            </Button>
 
-      <Divider />
+            <Button
+              icon={<FlagOutlined />}
+              size="large"
+              onClick={() => setReportModalVisible(true)}
+              style={{
+                border: '1px solid rgba(0, 0, 0, 0.15)',
+                borderRadius: '99em',
+                fontSize: '14px',
+                fontWeight: 400,
+                color: 'rgba(0, 0, 0, 0.68)',
+                backgroundColor: 'transparent',
+                height: '40px',
+                padding: '0 16px'
+              }}
+            >
+              Мэдэгдэх
+            </Button>
+          </Space>
 
-      <Title level={3}>Сэтгэгдэл ({comments.length})</Title>
+          <ShareButtons 
+            url={window.location.href} 
+            title={post.title}
+            description={post.title}
+          />
+        </div>
+      </div>
 
-      <Card style={{ marginBottom: 24 }}>
+      <ReportModal
+        visible={reportModalVisible}
+        onClose={() => setReportModalVisible(false)}
+        postId={id}
+      />
+
+      <Divider style={{ marginBottom: 32, borderColor: 'rgba(0, 0, 0, 0.05)' }} />
+
+      <Title 
+        level={3}
+        style={{
+          fontFamily: 'Playfair Display, Georgia, Cambria, serif',
+          fontSize: '24px',
+          fontWeight: 600,
+          marginBottom: 24,
+          color: '#242424'
+        }}
+      >
+        Сэтгэгдэл ({comments.length})
+      </Title>
+
+      <Card 
+        style={{ 
+          marginBottom: 32, 
+          border: '1px solid rgba(0, 0, 0, 0.15)',
+          borderRadius: '4px',
+          boxShadow: 'none'
+        }}
+      >
         <TextArea
           rows={4}
           value={commentText}
           onChange={(e) => setCommentText(e.target.value)}
           placeholder="Сэтгэгдэл бичих..."
           disabled={submittingComment}
+          style={{
+            fontSize: '16px',
+            lineHeight: '24px',
+            border: 'none',
+            padding: 0
+          }}
         />
         <Button
           type="primary"
           onClick={handleAddComment}
           loading={submittingComment}
-          style={{ marginTop: 12 }}
+          style={{ 
+            marginTop: 12,
+            backgroundColor: '#1a8917',
+            border: 'none',
+            borderRadius: '99em',
+            fontSize: '14px',
+            fontWeight: 400,
+            height: '36px'
+          }}
         >
           Сэтгэгдэл нэмэх
         </Button>
       </Card>
 
       {loadingComments ? (
-        <div style={{ textAlign: 'center', padding: '20px 0' }}>
+        <div style={{ textAlign: 'center', padding: '40px 0' }}>
           <Spin />
         </div>
       ) : (
-        <List
-          dataSource={comments}
-          renderItem={(comment) => (
-            <List.Item>
-              <List.Item.Meta
-                title={<Text strong>{comment.username}</Text>}
-                description={
-                  <>
-                    <Paragraph style={{ marginBottom: 4 }}>{comment.content}</Paragraph>
-                    <Text type="secondary" style={{ fontSize: 12 }}>
-                      {new Date(comment.createdAt).toLocaleString('mn-MN')}
+        <div>
+          {comments.map((comment) => (
+            <div key={comment.id} style={{ marginBottom: 24 }}>
+              {/* Main Comment */}
+              <div style={{ 
+                borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
+                padding: '24px 0'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                  <div style={{ flex: 1 }}>
+                    <Text strong style={{ 
+                      fontSize: '14px',
+                      color: '#242424',
+                      fontWeight: 500 
+                    }}>
+                      {comment.username}
                     </Text>
-                  </>
-                }
-              />
-            </List.Item>
-          )}
-        />
+                    <Paragraph style={{ 
+                      marginTop: 8,
+                      marginBottom: 8,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: 'rgba(0, 0, 0, 0.68)'
+                    }}>
+                      {comment.content}
+                    </Paragraph>
+                    <Space style={{ fontSize: '13px', color: 'rgba(0, 0, 0, 0.54)' }}>
+                      <Text type="secondary" style={{ fontSize: '13px' }}>
+                        {new Date(comment.createdAt).toLocaleString('mn-MN', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </Text>
+                      <Button 
+                        type="link" 
+                        size="small" 
+                        onClick={() => setReplyingTo(comment.id)}
+                        style={{ padding: 0, height: 'auto', fontSize: '13px' }}
+                      >
+                        Хариулах {comment.replyCount > 0 && `(${comment.replyCount})`}
+                      </Button>
+                    </Space>
+
+                    {/* Reply Input */}
+                    {replyingTo === comment.id && (
+                      <div style={{ marginTop: 12 }}>
+                        <TextArea
+                          rows={2}
+                          value={replyText[comment.id] || ''}
+                          onChange={(e) => setReplyText({ ...replyText, [comment.id]: e.target.value })}
+                          placeholder={`${comment.username}-д хариулах...`}
+                          style={{ fontSize: '14px' }}
+                        />
+                        <Space style={{ marginTop: 8 }}>
+                          <Button
+                            type="primary"
+                            size="small"
+                            onClick={() => handleReply(comment.id)}
+                          >
+                            Хариулах
+                          </Button>
+                          <Button
+                            size="small"
+                            onClick={() => setReplyingTo(null)}
+                          >
+                            Болих
+                          </Button>
+                        </Space>
+                      </div>
+                    )}
+
+                    {/* Replies */}
+                    {comment.replies && comment.replies.length > 0 && (
+                      <div style={{ marginTop: 16, marginLeft: 24, borderLeft: '2px solid rgba(0, 0, 0, 0.05)', paddingLeft: 16 }}>
+                        {comment.replies.map((reply) => (
+                          <div key={reply.id} style={{ marginBottom: 16 }}>
+                            <Text strong style={{ fontSize: '13px', color: '#242424' }}>
+                              {reply.username}
+                            </Text>
+                            <Paragraph style={{ 
+                              marginTop: 4,
+                              marginBottom: 4,
+                              fontSize: '14px',
+                              lineHeight: '20px',
+                              color: 'rgba(0, 0, 0, 0.68)'
+                            }}>
+                              {reply.content}
+                            </Paragraph>
+                            <Text type="secondary" style={{ fontSize: '12px' }}>
+                              {new Date(reply.createdAt).toLocaleString('mn-MN', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </Text>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

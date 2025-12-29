@@ -18,6 +18,8 @@ public class PostDto {
     private String content;
     private String authorId;
     private String authorName;
+    private String categoryId;
+    private String categoryName;
     private PostStatus status;
     private Integer likes;
     private Integer views;

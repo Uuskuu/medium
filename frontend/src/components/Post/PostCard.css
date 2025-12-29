@@ -1,15 +1,71 @@
 .post-card {
-  transition: transform 0.2s, box-shadow 0.2s;
+  border: none !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+  border-radius: 0 !important;
+  padding: 32px 0 !important;
+  margin-bottom: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  transition: all 0.15s ease-in-out;
 }
 
 .post-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: rgba(0, 0, 0, 0.01) !important;
+}
+
+.post-card .ant-card-body {
+  padding: 0 !important;
+}
+
+.post-card-title {
+  font-family: 'Playfair Display', Georgia, Cambria, serif !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  line-height: 28px !important;
+  color: #242424 !important;
+  margin-bottom: 8px !important;
+  letter-spacing: -0.3px;
+}
+
+.post-card-excerpt {
+  font-size: 16px !important;
+  line-height: 24px !important;
+  color: rgba(0, 0, 0, 0.68) !important;
+  font-weight: 400 !important;
+  margin-bottom: 12px !important;
+}
+
+.post-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.post-card-author {
+  color: #242424 !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+}
+
+.post-card-meta .anticon {
+  margin-right: 4px;
 }
 
 @media (max-width: 768px) {
   .post-card {
-    margin-bottom: 12px;
+    padding: 24px 0 !important;
+  }
+
+  .post-card-title {
+    font-size: 20px !important;
+    line-height: 24px !important;
+  }
+
+  .post-card-excerpt {
+    font-size: 15px !important;
+    line-height: 20px !important;
   }
 }
 

@@ -28,6 +28,8 @@ public class Post {
     
     private String authorId;
     
+    private String categoryId;
+    
     @Builder.Default
     private PostStatus status = PostStatus.DRAFT;
     

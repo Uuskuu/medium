@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, Space, Tag, Typography } from 'antd';
 import { EyeOutlined, LikeOutlined, CalendarOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { getReadingTime } from '../../utils/readingTime';
 import './PostCard.css';
 
 const { Title, Text, Paragraph } = Typography;
@@ -27,29 +28,59 @@ const PostCard = ({ post }) => {
       hoverable
       className="post-card"
       onClick={() => navigate(`/posts/${post.id}`)}
-      style={{ marginBottom: 16 }}
     >
       <Space direction="vertical" size="small" style={{ width: '100%' }}>
-        <Title level={4} style={{ margin: 0 }}>
+        <div className="post-card-meta" style={{ marginBottom: 8 }}>
+          <Text className="post-card-author">{post.authorName}</Text>
+          <Text type="secondary" style={{ fontSize: '13px' }}>·</Text>
+          <Text type="secondary" style={{ fontSize: '13px' }}>
+            {new Date(post.publishedAt || post.createdAt).toLocaleDateString('mn-MN', { 
+              year: 'numeric', 
+              month: 'short', 
+              day: 'numeric' 
+            })}
+          </Text>
+          {post.categoryName && (
+            <>
+              <Text type="secondary" style={{ fontSize: '13px' }}>·</Text>
+              <Tag 
+                style={{ 
+                  fontSize: '12px',
+                  padding: '2px 8px',
+                  borderRadius: '4px',
+                  border: '1px solid rgba(0, 0, 0, 0.15)',
+                  backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                  color: 'rgba(0, 0, 0, 0.68)',
+                  marginLeft: 4
+                }}
+              >
+                {post.categoryName}
+              </Tag>
+            </>
+          )}
+        </div>
+
+        <Title level={4} className="post-card-title">
           {post.title}
         </Title>
 
-        <Paragraph ellipsis={{ rows: 2 }} style={{ margin: 0, color: '#666' }}>
+        <Paragraph ellipsis={{ rows: 2 }} className="post-card-excerpt">
           {getExcerpt(post.content)}
         </Paragraph>
 
-        <Space wrap>
+        <div className="post-card-meta">
           <Text type="secondary">
-            <CalendarOutlined /> {new Date(post.publishedAt || post.createdAt).toLocaleDateString('mn-MN')}
+            {getReadingTime(post.content)}
           </Text>
+          <Text type="secondary">·</Text>
           <Text type="secondary">
             <EyeOutlined /> {post.views}
           </Text>
+          <Text type="secondary">·</Text>
           <Text type="secondary">
             <LikeOutlined /> {post.likes}
           </Text>
-          <Tag color="blue">{post.authorName}</Tag>
-        </Space>
+        </div>
       </Space>
     </Card>
   );

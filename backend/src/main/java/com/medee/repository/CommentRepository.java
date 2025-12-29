@@ -9,7 +9,10 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends MongoRepository<Comment, String> {
     List<Comment> findByPostIdOrderByCreatedAtDesc(String postId);
+    List<Comment> findByPostIdAndParentCommentIdIsNullOrderByCreatedAtDesc(String postId);
+    List<Comment> findByParentCommentIdOrderByCreatedAtAsc(String parentCommentId);
     long countByPostId(String postId);
     long countByUserId(String userId);
+    long countByParentCommentId(String parentCommentId);
 }
 

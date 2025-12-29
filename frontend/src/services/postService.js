@@ -6,6 +6,11 @@ class PostService {
     return response.data;
   }
 
+  async getApprovedPostsByCategory(categoryId, page = 0, size = 10) {
+    const response = await api.get('/posts', { params: { categoryId, page, size } });
+    return response.data;
+  }
+
   async getPostById(id) {
     const response = await api.get(`/posts/${id}`);
     return response.data;
@@ -51,8 +56,17 @@ class PostService {
     return response.data;
   }
 
-  async addComment(postId, content) {
-    const response = await api.post(`/posts/${postId}/comments`, { content });
+  async addComment(postId, content, parentCommentId = null) {
+    const response = await api.post(`/posts/${postId}/comments`, { 
+      content,
+      parentCommentId 
+    });
+    return response.data;
+  }
+
+  // Report post
+  async reportPost(postId, reason, description) {
+    const response = await api.post(`/posts/${postId}/report`, { reason, description });
     return response.data;
   }
 
@@ -69,6 +83,22 @@ class PostService {
 
   async rejectPost(id, note) {
     const response = await api.post(`/admin/posts/${id}/reject`, { note });
+    return response.data;
+  }
+
+  // Admin Report Management
+  async getAllReports(page = 0, size = 10) {
+    const response = await api.get('/admin/reports', { params: { page, size } });
+    return response.data;
+  }
+
+  async getPendingReports(page = 0, size = 10) {
+    const response = await api.get('/admin/reports/pending', { params: { page, size } });
+    return response.data;
+  }
+
+  async reviewReport(id, status, note) {
+    const response = await api.post(`/admin/reports/${id}/review`, { note }, { params: { status } });
     return response.data;
   }
 }

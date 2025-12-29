@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -17,7 +18,10 @@ public class CommentDto {
     private String userId;
     private String username;
     private String content;
+    private String parentCommentId;
     private LocalDateTime createdAt;
     private Boolean isAnonymous;
+    private Integer replyCount;
+    private List<CommentDto> replies;
 }
 

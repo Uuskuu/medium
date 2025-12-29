@@ -2,9 +2,11 @@ package com.medee.service;
 
 import com.medee.dto.PostDto;
 import com.medee.dto.PostRequest;
+import com.medee.model.Category;
 import com.medee.model.Post;
 import com.medee.model.PostStatus;
 import com.medee.model.User;
+import com.medee.repository.CategoryRepository;
 import com.medee.repository.PostRepository;
 import com.medee.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +24,14 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
 
     public PostDto createPost(String authorId, PostRequest request) {
         Post post = Post.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
                 .authorId(authorId)
+                .categoryId(request.getCategoryId())
                 .status(PostStatus.DRAFT)
                 .likes(0)
                 .views(0)
@@ -47,6 +51,9 @@ public class PostService {
 
         post.setTitle(request.getTitle());
         post.setContent(request.getContent());
+        if (request.getCategoryId() != null) {
+            post.setCategoryId(request.getCategoryId());
+        }
         post = postRepository.save(post);
 
         return mapToDto(post);
@@ -93,6 +100,11 @@ public class PostService {
 
     public Page<PostDto> getApprovedPosts(Pageable pageable) {
         Page<Post> posts = postRepository.findByStatus(PostStatus.APPROVED, pageable);
+        return posts.map(this::mapToDto);
+    }
+
+    public Page<PostDto> getApprovedPostsByCategory(String categoryId, Pageable pageable) {
+        Page<Post> posts = postRepository.findByCategoryIdAndStatus(categoryId, PostStatus.APPROVED, pageable);
         return posts.map(this::mapToDto);
     }
 
@@ -152,12 +164,22 @@ public class PostService {
                 ? author.getProfile().getDisplayName() 
                 : (author != null ? author.getUsername() : "Unknown");
 
+        String categoryName = null;
+        if (post.getCategoryId() != null) {
+            Category category = categoryRepository.findById(post.getCategoryId()).orElse(null);
+            if (category != null) {
+                categoryName = category.getName();
+            }
+        }
+
         return PostDto.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .authorId(post.getAuthorId())
                 .authorName(authorName)
+                .categoryId(post.getCategoryId())
+                .categoryName(categoryName)
                 .status(post.getStatus())
                 .likes(post.getLikes())
                 .views(post.getViews())

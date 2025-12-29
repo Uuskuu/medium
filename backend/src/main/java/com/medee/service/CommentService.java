@@ -25,10 +25,21 @@ public class CommentService {
                 .postId(postId)
                 .userId(isAnonymous ? null : userId)
                 .content(request.getContent())
+                .parentCommentId(request.getParentCommentId())
                 .isAnonymous(isAnonymous)
+                .replyCount(0)
                 .build();
 
         comment = commentRepository.save(comment);
+
+        // Update parent comment reply count if this is a reply
+        if (request.getParentCommentId() != null) {
+            Comment parentComment = commentRepository.findById(request.getParentCommentId()).orElse(null);
+            if (parentComment != null) {
+                parentComment.setReplyCount(parentComment.getReplyCount() + 1);
+                commentRepository.save(parentComment);
+            }
+        }
 
         // Update reputation points for the post author
         if (!isAnonymous) {
@@ -39,8 +50,14 @@ public class CommentService {
     }
 
     public List<CommentDto> getCommentsByPostId(String postId) {
-        List<Comment> comments = commentRepository.findByPostIdOrderByCreatedAtDesc(postId);
-        return comments.stream().map(this::mapToDto).collect(Collectors.toList());
+        // Get only top-level comments (no parent)
+        List<Comment> topLevelComments = commentRepository.findByPostIdAndParentCommentIdIsNullOrderByCreatedAtDesc(postId);
+        return topLevelComments.stream().map(this::mapToDtoWithReplies).collect(Collectors.toList());
+    }
+    
+    public List<CommentDto> getRepliesByCommentId(String commentId) {
+        List<Comment> replies = commentRepository.findByParentCommentIdOrderByCreatedAtAsc(commentId);
+        return replies.stream().map(this::mapToDto).collect(Collectors.toList());
     }
 
     public void deleteComment(String commentId, String userId) {
@@ -69,9 +86,19 @@ public class CommentService {
                 .userId(comment.getUserId())
                 .username(username)
                 .content(comment.getContent())
+                .parentCommentId(comment.getParentCommentId())
                 .createdAt(comment.getCreatedAt())
                 .isAnonymous(comment.getIsAnonymous())
+                .replyCount(comment.getReplyCount())
                 .build();
+    }
+    
+    private CommentDto mapToDtoWithReplies(Comment comment) {
+        CommentDto dto = mapToDto(comment);
+        // Optionally load first few replies
+        List<Comment> replies = commentRepository.findByParentCommentIdOrderByCreatedAtAsc(comment.getId());
+        dto.setReplies(replies.stream().map(this::mapToDto).collect(Collectors.toList()));
+        return dto;
     }
 }
 

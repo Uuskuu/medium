@@ -1,26 +1,35 @@
 import api from './api';
 
-class UserService {
-  async getAllUsers() {
+const userService = {
+  // Get current user profile
+  getCurrentUser: async () => {
+    const response = await api.get('/users/me');
+    return response.data;
+  },
+
+  // Get all users (Admin only)
+  getAllUsers: async () => {
     const response = await api.get('/admin/users');
     return response.data;
-  }
+  },
 
-  async getAuthors() {
-    const response = await api.get('/admin/authors');
+  // Get all authors (Admin only)
+  getAuthors: async () => {
+    const response = await api.get('/admin/users/authors');
     return response.data;
-  }
+  },
 
-  async calculateSalaries(month) {
-    const response = await api.post('/admin/salary/calculate', null, { params: { month } });
+  // Get top authors by reputation
+  getTopAuthors: async (limit = 5) => {
+    const response = await api.get('/api/users/top-authors', { params: { limit } });
+    return response.data.data;
+  },
+
+  // Update user role (Admin only)
+  updateUserRole: async (userId, role) => {
+    const response = await api.put(`/admin/users/${userId}/role`, { role });
     return response.data;
-  }
+  },
+};
 
-  async getSalaryReport(month) {
-    const response = await api.get('/admin/salary/report', { params: { month } });
-    return response.data;
-  }
-}
-
-export default new UserService();
-
+export default userService;

@@ -32,56 +32,109 @@ const Register = observer(() => {
   };
 
   return (
-    <div style={{ maxWidth: 500, margin: '40px auto' }}>
-      <Card>
-        <Title level={2} style={{ textAlign: 'center', marginBottom: 24 }}>
+    <div style={{ maxWidth: 520, margin: '60px auto', padding: '0 24px' }}>
+      <Card 
+        style={{ 
+          border: '1px solid rgba(0, 0, 0, 0.15)',
+          borderRadius: '4px',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+          padding: '32px'
+        }}
+        bodyStyle={{ padding: 0 }}
+      >
+        <Title 
+          level={2} 
+          style={{ 
+            textAlign: 'center', 
+            marginBottom: 32,
+            fontFamily: 'Playfair Display, Georgia, Cambria, serif',
+            fontSize: '32px',
+            fontWeight: 700,
+            color: '#242424'
+          }}
+        >
           Бүртгүүлэх
         </Title>
         <Form name="register" onFinish={onFinish} layout="vertical" size="large">
           <Form.Item
             name="username"
-            label="Хэрэглэгчийн нэр"
+            label={<span style={{ fontSize: '14px', fontWeight: 500, color: '#242424' }}>Хэрэглэгчийн нэр</span>}
             rules={[
               { required: true, message: 'Хэрэглэгчийн нэр оруулна уу!' },
               { min: 3, message: 'Хэрэглэгчийн нэр 3-аас дээш тэмдэгттэй байх ёстой!' },
             ]}
           >
-            <Input prefix={<UserOutlined />} placeholder="Хэрэглэгчийн нэр" />
+            <Input 
+              prefix={<UserOutlined style={{ color: 'rgba(0, 0, 0, 0.45)' }} />} 
+              placeholder="Хэрэглэгчийн нэр"
+              style={{
+                fontSize: '16px',
+                padding: '12px 16px',
+                borderColor: 'rgba(0, 0, 0, 0.15)',
+                borderRadius: '4px'
+              }}
+            />
           </Form.Item>
 
           <Form.Item
             name="email"
-            label="Имэйл"
+            label={<span style={{ fontSize: '14px', fontWeight: 500, color: '#242424' }}>Имэйл</span>}
             rules={[
               { required: true, message: 'Имэйл оруулна уу!' },
               { type: 'email', message: 'Зөв имэйл хаяг оруулна уу!' },
             ]}
           >
-            <Input prefix={<MailOutlined />} placeholder="Имэйл" />
+            <Input 
+              prefix={<MailOutlined style={{ color: 'rgba(0, 0, 0, 0.45)' }} />} 
+              placeholder="Имэйл"
+              style={{
+                fontSize: '16px',
+                padding: '12px 16px',
+                borderColor: 'rgba(0, 0, 0, 0.15)',
+                borderRadius: '4px'
+              }}
+            />
           </Form.Item>
 
           <Form.Item
             name="displayName"
-            label="Дэлгэцийн нэр"
+            label={<span style={{ fontSize: '14px', fontWeight: 500, color: '#242424' }}>Дэлгэцийн нэр</span>}
             rules={[{ required: true, message: 'Дэлгэцийн нэр оруулна уу!' }]}
           >
-            <Input placeholder="Дэлгэцийн нэр" />
+            <Input 
+              placeholder="Дэлгэцийн нэр"
+              style={{
+                fontSize: '16px',
+                padding: '12px 16px',
+                borderColor: 'rgba(0, 0, 0, 0.15)',
+                borderRadius: '4px'
+              }}
+            />
           </Form.Item>
 
           <Form.Item
             name="password"
-            label="Нууц үг"
+            label={<span style={{ fontSize: '14px', fontWeight: 500, color: '#242424' }}>Нууц үг</span>}
             rules={[
               { required: true, message: 'Нууц үг оруулна уу!' },
               { min: 6, message: 'Нууц үг 6-аас дээш тэмдэгттэй байх ёстой!' },
             ]}
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="Нууц үг" />
+            <Input.Password 
+              prefix={<LockOutlined style={{ color: 'rgba(0, 0, 0, 0.45)' }} />} 
+              placeholder="Нууц үг"
+              style={{
+                fontSize: '16px',
+                padding: '12px 16px',
+                borderColor: 'rgba(0, 0, 0, 0.15)',
+                borderRadius: '4px'
+              }}
+            />
           </Form.Item>
 
           <Form.Item
             name="confirmPassword"
-            label="Нууц үг баталгаажуулах"
+            label={<span style={{ fontSize: '14px', fontWeight: 500, color: '#242424' }}>Нууц үг баталгаажуулах</span>}
             dependencies={['password']}
             rules={[
               { required: true, message: 'Нууц үгээ баталгаажуулна уу!' },
@@ -95,25 +148,61 @@ const Register = observer(() => {
               }),
             ]}
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="Нууц үг баталгаажуулах" />
+            <Input.Password 
+              prefix={<LockOutlined style={{ color: 'rgba(0, 0, 0, 0.45)' }} />} 
+              placeholder="Нууц үг баталгаажуулах"
+              style={{
+                fontSize: '16px',
+                padding: '12px 16px',
+                borderColor: 'rgba(0, 0, 0, 0.15)',
+                borderRadius: '4px'
+              }}
+            />
           </Form.Item>
 
-          <Form.Item name="role" label="Дүр" initialValue="READER">
+          <Form.Item 
+            name="role" 
+            label={<span style={{ fontSize: '14px', fontWeight: 500, color: '#242424' }}>Дүр</span>}
+            initialValue="READER"
+          >
             <Radio.Group>
-              <Radio value="READER">Уншигч</Radio>
-              <Radio value="AUTHOR">Нийтлэгч</Radio>
+              <Radio value="READER" style={{ fontSize: '14px' }}>Уншигч</Radio>
+              <Radio value="AUTHOR" style={{ fontSize: '14px' }}>Нийтлэгч</Radio>
             </Radio.Group>
           </Form.Item>
 
-          <Form.Item>
-            <Button type="primary" htmlType="submit" loading={loading} block>
+          <Form.Item style={{ marginTop: 32 }}>
+            <Button 
+              type="primary" 
+              htmlType="submit" 
+              loading={loading} 
+              block
+              style={{
+                backgroundColor: '#1a8917',
+                border: 'none',
+                borderRadius: '99em',
+                height: '48px',
+                fontSize: '16px',
+                fontWeight: 500
+              }}
+            >
               Бүртгүүлэх
             </Button>
           </Form.Item>
 
-          <div style={{ textAlign: 'center' }}>
-            <Text>
-              Бүртгэлтэй юу? <Link to="/login">Нэвтрэх</Link>
+          <div style={{ textAlign: 'center', marginTop: 24 }}>
+            <Text style={{ fontSize: '14px', color: 'rgba(0, 0, 0, 0.68)' }}>
+              Бүртгэлтэй юу?{' '}
+              <Link 
+                to="/login"
+                style={{ 
+                  color: '#1a8917',
+                  fontWeight: 500,
+                  textDecoration: 'none'
+                }}
+              >
+                Нэвтрэх
+              </Link>
             </Text>
           </div>
         </Form>

@@ -17,5 +17,7 @@ public class PostRequest {
     
     @NotBlank(message = "Content is required")
     private String content; // Draft.js raw content JSON
+    
+    private String categoryId;
 }
 

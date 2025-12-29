@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, message, Typography, Space, Card, Spin } from 'antd';
+import { Form, Input, Button, message, Typography, Space, Card, Spin, Select } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useStores } from '../../stores';
@@ -9,7 +9,7 @@ const { Title } = Typography;
 
 const EditPost = observer(() => {
   const { id } = useParams();
-  const { postStore } = useStores();
+  const { postStore, categoryStore } = useStores();
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -17,13 +17,17 @@ const EditPost = observer(() => {
   const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
+    categoryStore.fetchActiveCategories();
     loadPost();
-  }, [id]);
+  }, [id, categoryStore]);
 
   const loadPost = async () => {
     try {
       const post = await postStore.fetchPostById(id);
-      form.setFieldsValue({ title: post.title });
+      form.setFieldsValue({ 
+        title: post.title,
+        categoryId: post.categoryId
+      });
       setContent(post.content);
     } catch (error) {
       message.error('Мэдээг ачаалж чадсангүй');
@@ -40,6 +44,7 @@ const EditPost = observer(() => {
       await postStore.updatePost(id, {
         title: values.title,
         content: content,
+        categoryId: values.categoryId,
       });
       message.success('Мэдээ шинэчлэгдлээ!');
       navigate('/author/posts');
@@ -72,6 +77,24 @@ const EditPost = observer(() => {
             rules={[{ required: true, message: 'Гарчиг оруулна уу!' }]}
           >
             <Input size="large" placeholder="Мэдээний гарчиг..." />
+          </Form.Item>
+
+          <Form.Item
+            name="categoryId"
+            label="Категори"
+            rules={[{ required: true, message: 'Категори сонгоно уу!' }]}
+          >
+            <Select 
+              size="large" 
+              placeholder="Категори сонгох"
+              loading={categoryStore.loading}
+            >
+              {categoryStore.activeCategories.map((category) => (
+                <Select.Option key={category.id} value={category.id}>
+                  {category.name}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
 
           <Form.Item label="Агуулга" required>

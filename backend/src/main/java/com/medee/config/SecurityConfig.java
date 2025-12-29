@@ -60,11 +60,16 @@ public class SecurityConfig {
                         // Public endpoints
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/posts", "/posts/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/posts/*/like", "/posts/*/comments").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/posts/*/like", "/posts/*/comments", "/posts/*/report").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/categories", "/api/categories/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/users/top-authors").permitAll()
                         // Author endpoints
                         .requestMatchers("/author/**").hasAnyRole("AUTHOR", "ADMIN")
                         // Admin endpoints
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/categories/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/categories/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasRole("ADMIN")
                         // All other requests need authentication
                         .anyRequest().authenticated()
                 )

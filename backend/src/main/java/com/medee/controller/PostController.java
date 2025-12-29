@@ -33,9 +33,15 @@ public class PostController {
     @GetMapping
     public ResponseEntity<Page<PostDto>> getApprovedPosts(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String categoryId) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("publishedAt").descending());
-        Page<PostDto> posts = postService.getApprovedPosts(pageable);
+        Page<PostDto> posts;
+        if (categoryId != null && !categoryId.isEmpty()) {
+            posts = postService.getApprovedPostsByCategory(categoryId, pageable);
+        } else {
+            posts = postService.getApprovedPosts(pageable);
+        }
         return ResponseEntity.ok(posts);
     }
 

@@ -32,6 +32,24 @@ class PostStore {
     }
   }
 
+  async fetchApprovedPostsByCategory(categoryId, page = 0, size = 10) {
+    this.loading = true;
+    try {
+      const response = await postService.getApprovedPostsByCategory(categoryId, page, size);
+      runInAction(() => {
+        this.posts = response.content;
+        this.totalPages = response.totalPages;
+        this.currentPage = response.number;
+      });
+    } catch (error) {
+      console.error('Failed to fetch posts by category:', error);
+    } finally {
+      runInAction(() => {
+        this.loading = false;
+      });
+    }
+  }
+
   async fetchPostById(id) {
     this.loading = true;
     try {

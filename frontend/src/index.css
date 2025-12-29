@@ -10,10 +10,13 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #ffffff;
+  color: #242424;
 }
 
 #root {
   min-height: 100vh;
+  background-color: #ffffff;
 }
 
 /* Draft.js Editor Styles */
@@ -51,5 +54,50 @@ pre {
 code {
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
   font-size: 14px;
+}
+
+/* Medium-style link styling */
+a {
+  color: inherit;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: rgba(0, 0, 0, 0.68);
+}
+
+/* Ant Design overrides for Medium style */
+.ant-btn-primary {
+  background-color: #1a8917;
+  border-color: #1a8917;
+}
+
+.ant-btn-primary:hover,
+.ant-btn-primary:focus {
+  background-color: #156d12;
+  border-color: #156d12;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection color */
+::selection {
+  background-color: rgba(26, 137, 23, 0.3);
+  color: #242424;
+}
+
+::-moz-selection {
+  background-color: rgba(26, 137, 23, 0.3);
+  color: #242424;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  body {
+    font-size: 16px;
+  }
 }
 

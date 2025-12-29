@@ -26,10 +26,15 @@ public class Comment {
     
     private String content;
     
+    private String parentCommentId; // for nested replies
+    
     @CreatedDate
     private LocalDateTime createdAt;
     
     @Builder.Default
     private Boolean isAnonymous = false;
+    
+    @Builder.Default
+    private Integer replyCount = 0;
 }
 
