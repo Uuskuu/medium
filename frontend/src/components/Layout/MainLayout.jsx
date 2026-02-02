@@ -83,6 +83,12 @@ const MainLayout = observer(() => {
       onClick: () => navigate('/admin/dashboard'),
     });
     menuItems.push({
+      key: '/admin/users',
+      icon: <UserOutlined />,
+      label: 'Хэрэглэгч',
+      onClick: () => navigate('/admin/users'),
+    });
+    menuItems.push({
       key: '/admin/review',
       icon: <EditOutlined />,
       label: 'Мэдээ шалгах',
@@ -93,12 +99,6 @@ const MainLayout = observer(() => {
       icon: <HomeOutlined />,
       label: 'Категори',
       onClick: () => navigate('/admin/categories'),
-    });
-    menuItems.push({
-      key: '/admin/reports',
-      icon: <EditOutlined />,
-      label: 'Мэдэгдэл',
-      onClick: () => navigate('/admin/reports'),
     });
   }
 
@@ -173,10 +173,10 @@ const MainLayout = observer(() => {
               backgroundColor: '#1a8917',
               color: '#ffffff',
               border: 'none',
-              fontSize: '14px',
+              fontSize: '16px',
               fontWeight: 400,
               padding: '7px 16px',
-              height: 'auto'
+              height: '40px'
             }}
           >
             Нэвтрэх

@@ -64,6 +64,13 @@ const CategoryManagement = observer(() => {
 
   const columns = [
     {
+      title: '№',
+      key: 'index',
+      width: 60,
+      align: 'center',
+      render: (_value, _record, index) => index + 1,
+    },
+    {
       title: 'Нэр',
       dataIndex: 'name',
       key: 'name',

@@ -41,6 +41,13 @@ const SalaryManagement = observer(() => {
 
   const columns = [
     {
+      title: '№',
+      key: 'index',
+      width: 60,
+      align: 'center',
+      render: (_value, _record, index) => index + 1,
+    },
+    {
       title: 'Author ID',
       dataIndex: 'authorId',
       key: 'authorId',
@@ -123,7 +130,7 @@ const SalaryManagement = observer(() => {
 
             return (
               <Table.Summary.Row>
-                <Table.Summary.Cell index={0} colSpan={4}>
+              <Table.Summary.Cell index={0} colSpan={5}>
                   <strong>Нийт дүн</strong>
                 </Table.Summary.Cell>
                 <Table.Summary.Cell index={1} align="right">

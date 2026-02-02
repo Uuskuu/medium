@@ -25,25 +25,36 @@ const UserManagement = observer(() => {
 
   const columns = [
     {
+      title: '№',
+      key: 'index',
+      width: 60,
+      align: 'center',
+      render: (_value, _record, index) => index + 1,
+    },
+    {
       title: 'Хэрэглэгчийн нэр',
       dataIndex: 'username',
       key: 'username',
+      align: 'center'
     },
     {
       title: 'Дэлгэцийн нэр',
       dataIndex: 'displayName',
       key: 'displayName',
+      align: 'center'
     },
     {
       title: 'Имэйл',
       dataIndex: 'email',
       key: 'email',
+      align: 'center'
     },
     {
       title: 'Дүр',
       dataIndex: 'role',
       key: 'role',
       render: (role) => getRoleTag(role),
+      align: 'center'
     },
     {
       title: 'Reputation Points',
@@ -72,17 +83,6 @@ const UserManagement = observer(() => {
         loading={userStore.loading}
         pagination={{ pageSize: 10 }}
       />
-
-      <Card style={{ marginTop: 24 }}>
-        <Title level={4}>Нийтлэгчдийн жагсаалт (Reputation-аар эрэмбэлсэн)</Title>
-        <Table
-          columns={columns}
-          dataSource={userStore.authors}
-          rowKey="id"
-          loading={userStore.loading}
-          pagination={{ pageSize: 10 }}
-        />
-      </Card>
     </div>
   );
 });

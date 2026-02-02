@@ -23,14 +23,19 @@ const Login = observer(() => {
       
       // Navigate based on role
       if (authStore.isAdmin) {
-        navigate('/admin/dashboard');
+        navigate('/admin/users');
       } else if (authStore.isAuthor) {
         navigate('/author/dashboard');
       } else {
         navigate('/');
       }
     } catch (error) {
-      message.error(error.response?.data?.message || 'Нэвтрэх үед алдаа гарлаа');
+      const status = error.response?.status;
+      if (status === 401 || status === 403) {
+        message.error('Хэрэглэгчийн нэр эсвэл нууц үг буруу байна');
+      } else {
+        message.error(error.response?.data?.message || 'Нэвтрэх үед алдаа гарлаа');
+      }
     } finally {
       setLoading(false);
     }
