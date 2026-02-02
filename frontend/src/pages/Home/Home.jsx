@@ -12,13 +12,24 @@ const { Title, Text } = Typography;
 const Home = observer(() => {
   const { postStore, categoryStore } = useStores();
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get('search');
+  const categoryParam = searchParams.get('category');
 
   useEffect(() => {
     categoryStore.fetchActiveCategories();
-    postStore.fetchApprovedPosts(0, 10);
-  }, [postStore, categoryStore]);
+  }, [categoryStore]);
+
+  useEffect(() => {
+    const nextCategoryId = categoryParam || null;
+    setSelectedCategory(nextCategoryId);
+
+    if (nextCategoryId) {
+      postStore.fetchApprovedPostsByCategory(nextCategoryId, 0, 10);
+    } else {
+      postStore.fetchApprovedPosts(0, 10);
+    }
+  }, [categoryParam, postStore]);
 
   const handlePageChange = (page, pageSize) => {
     if (selectedCategory) {
@@ -30,12 +41,18 @@ const Home = observer(() => {
   };
 
   const handleCategorySelect = (categoryId) => {
-    setSelectedCategory(categoryId);
+    const params = new URLSearchParams(searchParams);
     if (categoryId) {
-      postStore.fetchApprovedPostsByCategory(categoryId, 0, 10);
+      params.set('category', categoryId);
     } else {
-      postStore.fetchApprovedPosts(0, 10);
+      params.delete('category');
     }
+    if (searchQuery) {
+      params.set('search', searchQuery);
+    } else {
+      params.delete('search');
+    }
+    setSearchParams(params);
   };
 
   // Filter posts by search query

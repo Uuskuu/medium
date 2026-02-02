@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Space, Typography, Modal, Input, message, Card } from 'antd';
+import { Table, Button, Space, Typography, Modal, Input, message, Card, Tag } from 'antd';
 import { CheckOutlined, CloseOutlined, EyeOutlined } from '@ant-design/icons';
 import { observer } from 'mobx-react-lite';
 import { useStores } from '../../stores';
@@ -17,7 +17,7 @@ const ReviewPosts = observer(() => {
   const [reviewAction, setReviewAction] = useState(null);
 
   useEffect(() => {
-    postStore.fetchPendingPosts(0, 100);
+    postStore.fetchReviewPosts(0, 100);
   }, [postStore]);
 
   const handleView = (post) => {
@@ -66,6 +66,18 @@ const ReviewPosts = observer(() => {
       width: '30%',
     },
     {
+      title: 'Төлөв',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status) => {
+        if (status === 'APPROVED') return <Tag color="green">Зөвшөөрсөн</Tag>;
+        if (status === 'PENDING_REVIEW') return <Tag color="gold">Хянагдаж байна</Tag>;
+        if (status === 'REJECTED') return <Tag color="red">Буцаасан</Tag>;
+        if (status === 'DRAFT') return <Tag>Ноорог</Tag>;
+        return <Tag>{status || '-'}</Tag>;
+      },
+    },
+    {
       title: 'Зохиогч',
       dataIndex: 'authorName',
       key: 'authorName',
@@ -80,17 +92,33 @@ const ReviewPosts = observer(() => {
       title: 'Үйлдэл',
       key: 'action',
       render: (_, record) => (
+        (() => {
+          const canReview = record.status === 'PENDING_REVIEW';
+          return (
         <Space size="small">
           <Button type="link" icon={<EyeOutlined />} onClick={() => handleView(record)}>
             Харах
           </Button>
-          <Button type="link" icon={<CheckOutlined />} onClick={() => handleApprove(record)}>
+          <Button
+            type="link"
+            icon={<CheckOutlined />}
+            onClick={() => handleApprove(record)}
+            disabled={!canReview}
+          >
             Зөвшөөрөх
           </Button>
-          <Button type="link" danger icon={<CloseOutlined />} onClick={() => handleReject(record)}>
+          <Button
+            type="link"
+            danger
+            icon={<CloseOutlined />}
+            onClick={() => handleReject(record)}
+            disabled={!canReview}
+          >
             Буцаах
           </Button>
         </Space>
+          );
+        })()
       ),
     },
   ];
@@ -98,12 +126,12 @@ const ReviewPosts = observer(() => {
   return (
     <div>
       <Title level={2} style={{ marginBottom: 24 }}>
-        Шалгалт хүлээж байгаа мэдээ
+        Мэдээ шалгах
       </Title>
 
       <Table
         columns={columns}
-        dataSource={postStore.pendingPosts}
+        dataSource={postStore.reviewPosts}
         rowKey="id"
         loading={postStore.loading}
         pagination={{ pageSize: 10 }}
@@ -118,10 +146,20 @@ const ReviewPosts = observer(() => {
           <Button key="close" onClick={() => setViewModalVisible(false)}>
             Хаах
           </Button>,
-          <Button key="approve" type="primary" onClick={() => handleApprove(selectedPost)}>
+          <Button
+            key="approve"
+            type="primary"
+            onClick={() => handleApprove(selectedPost)}
+            disabled={selectedPost?.status !== 'PENDING_REVIEW'}
+          >
             Зөвшөөрөх
           </Button>,
-          <Button key="reject" danger onClick={() => handleReject(selectedPost)}>
+          <Button
+            key="reject"
+            danger
+            onClick={() => handleReject(selectedPost)}
+            disabled={selectedPost?.status !== 'PENDING_REVIEW'}
+          >
             Буцаах
           </Button>,
         ]}

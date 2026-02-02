@@ -46,6 +46,16 @@ public class BackofficeController {
         return ResponseEntity.ok(posts);
     }
 
+    @GetMapping("/posts/review")
+    public ResponseEntity<Page<PostDto>> getReviewPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
+        Page<PostDto> posts = postService.getReviewPosts(userPrincipal.getId(), pageable);
+        return ResponseEntity.ok(posts);
+    }
+
     @PostMapping("/posts/{id}/approve")
     public ResponseEntity<PostDto> approvePost(
             @PathVariable String id,

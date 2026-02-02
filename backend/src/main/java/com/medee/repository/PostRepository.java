@@ -15,11 +15,14 @@ public interface PostRepository extends MongoRepository<Post, String> {
     List<Post> findByAuthorIdAndStatus(String authorId, PostStatus status);
     List<Post> findByAuthorId(String authorId);
     Page<Post> findByAuthorId(String authorId, Pageable pageable);
+    Page<Post> findByAuthorIdNot(String authorId, Pageable pageable);
+    Page<Post> findByAuthorIdNotAndStatusNot(String authorId, PostStatus status, Pageable pageable);
     long countByStatus(PostStatus status);
     long countByAuthorId(String authorId);
     
     // Category related methods
     long countByCategoryId(String categoryId);
+    long countByCategoryIdAndStatus(String categoryId, PostStatus status);
     Page<Post> findByCategoryIdAndStatus(String categoryId, PostStatus status, Pageable pageable);
     List<Post> findByCategoryId(String categoryId);
 }

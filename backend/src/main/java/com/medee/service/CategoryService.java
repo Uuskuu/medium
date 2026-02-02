@@ -3,6 +3,7 @@ package com.medee.service;
 import com.medee.dto.CategoryDto;
 import com.medee.dto.CategoryRequest;
 import com.medee.model.Category;
+import com.medee.model.PostStatus;
 import com.medee.repository.CategoryRepository;
 import com.medee.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +22,19 @@ public class CategoryService {
 
     public List<CategoryDto> getAllCategories() {
         return categoryRepository.findAll().stream()
-                .map(this::convertToDto)
+                .map(category -> {
+                    long postCount = postRepository.countByCategoryIdAndStatus(category.getId(), PostStatus.APPROVED);
+                    return convertToDto(category, (int) postCount);
+                })
                 .collect(Collectors.toList());
     }
 
     public List<CategoryDto> getActiveCategories() {
         return categoryRepository.findByActiveTrueOrderByDisplayOrderAsc().stream()
-                .map(this::convertToDto)
+                .map(category -> {
+                    long postCount = postRepository.countByCategoryIdAndStatus(category.getId(), PostStatus.APPROVED);
+                    return convertToDto(category, (int) postCount);
+                })
                 .collect(Collectors.toList());
     }
 
@@ -126,6 +133,10 @@ public class CategoryService {
     }
 
     private CategoryDto convertToDto(Category category) {
+        return convertToDto(category, category.getPostCount());
+    }
+
+    private CategoryDto convertToDto(Category category, Integer postCount) {
         return CategoryDto.builder()
                 .id(category.getId())
                 .name(category.getName())
@@ -134,7 +145,7 @@ public class CategoryService {
                 .iconUrl(category.getIconUrl())
                 .active(category.getActive())
                 .displayOrder(category.getDisplayOrder())
-                .postCount(category.getPostCount())
+                .postCount(postCount)
                 .createdAt(category.getCreatedAt())
                 .updatedAt(category.getUpdatedAt())
                 .build();

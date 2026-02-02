@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography, Space, Button, Divider, Input, List, message, Tag, Spin, Card } from 'antd';
 import { LikeOutlined, LikeFilled, EyeOutlined, CalendarOutlined, UserOutlined, FlagOutlined } from '@ant-design/icons';
@@ -16,6 +16,8 @@ const { TextArea } = Input;
 const PostView = observer(() => {
   const { id } = useParams();
   const { postStore, authStore } = useStores();
+  const hasLoadedRef = useRef(false);
+  const lastPostIdRef = useRef(null);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [replyText, setReplyText] = useState({});
@@ -26,6 +28,11 @@ const PostView = observer(() => {
   const [reportModalVisible, setReportModalVisible] = useState(false);
 
   useEffect(() => {
+    if (hasLoadedRef.current && lastPostIdRef.current === id) {
+      return;
+    }
+    lastPostIdRef.current = id;
+    hasLoadedRef.current = true;
     loadPost();
     loadComments();
   }, [id]);

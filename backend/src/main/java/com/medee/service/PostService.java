@@ -158,6 +158,15 @@ public class PostService {
         return posts.map(this::mapToDto);
     }
 
+    public Page<PostDto> getReviewPosts(String adminId, Pageable pageable) {
+        Page<Post> posts = postRepository.findByAuthorIdNotAndStatusNot(
+                adminId,
+                PostStatus.DRAFT,
+                pageable
+        );
+        return posts.map(this::mapToDto);
+    }
+
     private PostDto mapToDto(Post post) {
         User author = userRepository.findById(post.getAuthorId()).orElse(null);
         String authorName = author != null && author.getProfile() != null 

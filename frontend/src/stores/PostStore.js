@@ -6,6 +6,7 @@ class PostStore {
   currentPost = null;
   myPosts = [];
   pendingPosts = [];
+  reviewPosts = [];
   loading = false;
   totalPages = 0;
   currentPage = 0;
@@ -185,6 +186,24 @@ class PostStore {
       });
     } catch (error) {
       console.error('Failed to fetch pending posts:', error);
+    } finally {
+      runInAction(() => {
+        this.loading = false;
+      });
+    }
+  }
+
+  async fetchReviewPosts(page = 0, size = 10) {
+    this.loading = true;
+    try {
+      const response = await postService.getReviewPosts(page, size);
+      runInAction(() => {
+        this.reviewPosts = response.content;
+        this.totalPages = response.totalPages;
+        this.currentPage = response.number;
+      });
+    } catch (error) {
+      console.error('Failed to fetch review posts:', error);
     } finally {
       runInAction(() => {
         this.loading = false;

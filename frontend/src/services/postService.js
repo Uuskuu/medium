@@ -76,6 +76,11 @@ class PostService {
     return response.data;
   }
 
+  async getReviewPosts(page = 0, size = 10) {
+    const response = await api.get('/admin/posts/review', { params: { page, size } });
+    return response.data;
+  }
+
   async approvePost(id, note) {
     const response = await api.post(`/admin/posts/${id}/approve`, { note });
     return response.data;
